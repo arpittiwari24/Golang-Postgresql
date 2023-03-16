@@ -65,6 +65,12 @@ func (r *Repository) GetBooks(context *fiber.Ctx) error {
 	return nil
 }
 
+//delete book method
+
+func (r *Repository) DeleteBook(context *fiber.Ctx) error {
+
+}
+
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/create_books", r.CreateBook)
