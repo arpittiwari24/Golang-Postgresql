@@ -19,6 +19,8 @@ type Repository struct {
 	DB *gorm.DB
 }
 
+//create book method
+
 func (r *Repository) CreateBook(context *fiber.Ctx) error {
 	book := Book{}
 
@@ -31,18 +33,35 @@ func (r *Repository) CreateBook(context *fiber.Ctx) error {
 		return err
 	}
 
-	err := r.DB.Create(&book).Error
+	createerr := r.DB.Create(&book).Error
 
-	if err != nil {
+	if createerr != nil {
 		context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "Could not create book"},
 		)
+		return createerr
+	}
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{"message": "Book has been added"})
+	return nil
+}
+
+//get book method
+
+func (r *Repository) GetBooks(context *fiber.Ctx) error {
+	bookModels := &[]models.Books{}
+
+	err := r.DB.Find(bookModels).Error
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "could not get books"})
 		return err
 	}
 
-	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Book has been added"}
-	)
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "books fetched successfully",
+		"data":    bookModels,
+	})
 	return nil
 }
 
